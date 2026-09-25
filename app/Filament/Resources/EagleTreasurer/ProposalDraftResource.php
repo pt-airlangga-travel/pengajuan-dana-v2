@@ -198,6 +198,13 @@ class ProposalDraftResource extends Resource
             ]);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            \App\Filament\Resources\EagleTreasurer\RelationManagers\ProposalSubmissionsRelationManager::class,
+        ];
+    }
+
     public static function getPages(): array
     {
         return [

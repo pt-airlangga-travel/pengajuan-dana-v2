@@ -37,28 +37,28 @@ class DashboardStats extends BaseWidget
                 ->description('Menunggu bukti transfer')
                 ->descriptionIcon('heroicon-m-clock')
                 ->color('warning')
-                ->url(route('filament.dashboard.resources.eagle-treasurer.relation-managers.proposal-submissions.index'))
+                ->url(route('filament.dashboard.resources.eagle-treasurer.bank-details.index'))
                 ->chart([1, 2, 1, 3, 2, 1, 2]),
 
             Stat::make('Selesai Transfer', $submissionStats[1] ?? 0)
                 ->description('Semua rekening transferred')
                 ->descriptionIcon('heroicon-m-check-circle')
                 ->color('success')
-                ->url(route('filament.dashboard.resources.eagle-treasurer.relation-managers.proposal-submissions.index', ['tableFilters[proposal_submission_status][value]' => '1']))
+                ->url(route('filament.dashboard.resources.eagle-treasurer.bank-details.index'))
                 ->chart([1, 2, 3, 2, 1, 3, 2]),
 
             Stat::make('Ditolak', $submissionStats[0] ?? 0)
                 ->description('Ditolak Treasurer')
                 ->descriptionIcon('heroicon-m-x-circle')
                 ->color('danger')
-                ->url(route('filament.dashboard.resources.eagle-treasurer.relation-managers.proposal-submissions.index', ['tableFilters[proposal_submission_status][value]' => '0']))
+                ->url(route('filament.dashboard.resources.eagle-treasurer.bank-details.index'))
                 ->chart([0, 1, 0, 2, 1, 0, 1]),
 
             Stat::make('Selesai (Draft)', $submissionStats[1] ?? 0)
                 ->description('Draft & Submission selesai')
                 ->descriptionIcon('heroicon-m-check-circle')
                 ->color('success')
-                ->url(route('filament.dashboard.resources.eagle-treasurer.relation-managers.proposal-submissions.index', ['tableFilters[proposal_submission_status][value]' => '1']))
+                ->url(route('filament.dashboard.resources.eagle-treasurer.proposal-drafts.index'))
                 ->chart([1, 2, 3, 2, 1, 3, 2]),
         ];
     }
