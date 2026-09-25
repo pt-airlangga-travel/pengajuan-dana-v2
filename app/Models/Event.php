@@ -94,14 +94,25 @@ class Event extends Model
      */
     public static function getCachedSelectOptions(): array
     {
-        return cache()->remember('event_select_options', 3600, function () {
-            return self::orderByDesc('created_at')
-                ->get()
-                ->mapWithKeys(fn ($e) => [
-                    $e->event_defined_id => \App\Services\ProposalHelper::formatDefinedId($e->event_defined_id) . ' | ' . $e->event_name,
-                ])
-                ->toArray();
-        });
+        $cached = cache()->get('event_select_options');
+        if (is_array($cached)) {
+            return $cached;
+        }
+
+        if ($cached !== null) {
+            cache()->forget('event_select_options');
+        }
+
+        $options = self::orderByDesc('created_at')
+            ->get()
+            ->mapWithKeys(fn ($e) => [
+                $e->event_defined_id => \App\Services\ProposalHelper::formatDefinedId($e->event_defined_id) . ' | ' . $e->event_name,
+            ])
+            ->toArray();
+
+        cache()->put('event_select_options', $options, 3600);
+
+        return $options;
     }
 
     /**
@@ -109,7 +120,21 @@ class Event extends Model
      */
     public static function getCachedEvent(string $id): ?self
     {
-        return cache()->remember("event_defined_id:{$id}", 3600, fn () => self::with('institution')->where('event_defined_id', $id)->first());
+        $cached = cache()->get("event_defined_id:{$id}");
+        if ($cached instanceof self) {
+            return $cached;
+        }
+
+        if ($cached !== null) {
+            cache()->forget("event_defined_id:{$id}");
+        }
+
+        $event = self::with('institution')->where('event_defined_id', $id)->first();
+        if ($event) {
+            cache()->put("event_defined_id:{$id}", $event, 3600);
+        }
+
+        return $event;
     }
 
 }
