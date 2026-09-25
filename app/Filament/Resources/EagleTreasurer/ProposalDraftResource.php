@@ -66,8 +66,7 @@ class ProposalDraftResource extends Resource
                 SelectFilter::make('id_event')
                     ->label('Filter Event')
                     ->default(fn () => request()->query('event') ?? request()->input('filters.id_event.value'))
-                    ->options(fn () => Event::getCachedSelectOptions()
-                    ->mapWithKeys(fn ($e) => [$e->event_defined_id => ProposalHelper::formatDefinedId($e->event_defined_id) . ' | ' . $e->event_name]))
+                    ->options(fn () => Event::getCachedSelectOptions())
                     ->searchable()->preload()->native(false)
                     ->placeholder('Silakan Pilih Event')
                     ->query(function (Builder $query, array $data) {
