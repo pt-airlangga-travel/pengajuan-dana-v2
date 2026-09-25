@@ -59,8 +59,7 @@ class BankDetailResource extends Resource
     {
         return $table->striped()
             ->modifyQueryUsing(function (Builder $query) {
-                $query->with('BankTransfer');
-                // left join bank_transfers view: eager load BankTransfer via hasOne? BankAccount has no relation, so via subquery
+                $query->with(['BankTransfer', 'Bank']);
                 // Filter by ?submission=xxx if present in request (dari ProposalSubmissionResource link)
                 $submission = request()->query('submission') ?? request()->query('id_proposal_submission');
                 if ($submission) {
