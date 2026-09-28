@@ -35,7 +35,7 @@ class DashboardStats extends BaseWidget
                 ->description('Total event yang tersedia')
                 ->descriptionIcon('heroicon-m-calendar-days')
                 ->color('primary')
-                ->url(route('filament.dashboard.resources.system-admin.events.index'))
+                ->url(route('filament.dashboard.resources.shared.events.index'))
                 ->chart([7, 3, 4, 5, 6, 3, 5]),
 
             Stat::make('Draft Menunggu Admin', $draftStats[2] ?? 0)
@@ -70,35 +70,35 @@ class DashboardStats extends BaseWidget
                 ->description('Menunggu Manager approve')
                 ->descriptionIcon('heroicon-m-clock')
                 ->color('warning')
-                ->url(route('filament.dashboard.resources.organizer-admin.relation-managers.proposal-submissions.index'))
+                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index'))
                 ->chart([1, 2, 1, 3, 2, 1, 2]),
 
             Stat::make('Submission Diproses', $submissionStats[3] ?? 0)
                 ->description('Diproses Bendahara')
                 ->descriptionIcon('heroicon-m-arrow-path')
                 ->color('info')
-                ->url(route('filament.dashboard.resources.organizer-admin.relation-managers.proposal-submissions.index', ['tableFilters[proposal_submission_status][value]' => '3']))
+                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index'))
                 ->chart([1, 2, 3, 2, 1, 3, 2]),
 
             Stat::make('Submission Selesai', $submissionStats[1] ?? 0)
                 ->description('Transfer selesai')
                 ->descriptionIcon('heroicon-m-check-circle')
                 ->color('success')
-                ->url(route('filament.dashboard.resources.organizer-admin.relation-managers.proposal-submissions.index', ['tableFilters[proposal_submission_status][value]' => '1']))
+                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index'))
                 ->chart([1, 2, 3, 2, 1, 3, 2]),
 
             Stat::make('Submission Ditolak', $submissionStats[0] ?? 0)
                 ->description('Ditolak Manager/Bendahara')
                 ->descriptionIcon('heroicon-m-x-circle')
                 ->color('danger')
-                ->url(route('filament.dashboard.resources.organizer-admin.relation-managers.proposal-submissions.index', ['tableFilters[proposal_submission_status][value]' => '0']))
+                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index'))
                 ->chart([0, 1, 0, 2, 1, 0, 1]),
 
             Stat::make('Submission Dikembalikan', $submissionStats[4] ?? 0)
                 ->description('Dikembalikan ke member')
                 ->descriptionIcon('heroicon-m-arrow-uturn-left')
                 ->color('gray')
-                ->url(route('filament.dashboard.resources.organizer-admin.relation-managers.proposal-submissions.index', ['tableFilters[proposal_submission_status][value]' => '4']))
+                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index'))
                 ->chart([0, 1, 0, 2, 1, 0, 1]),
         ];
     }

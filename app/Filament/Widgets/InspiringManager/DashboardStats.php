@@ -37,35 +37,35 @@ class DashboardStats extends BaseWidget
                 ->description('Menunggu approval Manager')
                 ->descriptionIcon('heroicon-m-clock')
                 ->color('warning')
-                ->url(route('filament.dashboard.resources.inspiring-manager.relation-managers.proposal-submissions.index', ['tableFilters[proposal_submission_status][value]' => '2']))
+                ->url(route('filament.dashboard.resources.inspiring-manager.proposal-drafts.index'))
                 ->chart([1, 2, 1, 3, 2, 1, 2]),
 
             Stat::make('Diproses', $submissionStats[3] ?? 0)
                 ->description('Diproses Treasurer')
                 ->descriptionIcon('heroicon-m-arrow-path')
                 ->color('info')
-                ->url(route('filament.dashboard.resources.inspiring-manager.relation-managers.proposal-submissions.index', ['tableFilters[proposal_submission_status][value]' => '3']))
+                ->url(route('filament.dashboard.resources.inspiring-manager.proposal-drafts.index'))
                 ->chart([1, 2, 3, 2, 1, 3, 2]),
 
             Stat::make('Selesai', $submissionStats[1] ?? 0)
                 ->description('Selesai transfer')
                 ->descriptionIcon('heroicon-m-check-circle')
                 ->color('success')
-                ->url(route('filament.dashboard.resources.inspiring-manager.relation-managers.proposal-submissions.index', ['tableFilters[proposal_submission_status][value]' => '1']))
+                ->url(route('filament.dashboard.resources.inspiring-manager.proposal-drafts.index'))
                 ->chart([1, 2, 3, 2, 1, 3, 2]),
 
             Stat::make('Ditolak', $submissionStats[0] ?? 0)
                 ->description('Ditolak Manager')
                 ->descriptionIcon('heroicon-m-x-circle')
                 ->color('danger')
-                ->url(route('filament.dashboard.resources.inspiring-manager.relation-managers.proposal-submissions.index', ['tableFilters[proposal_submission_status][value]' => '0']))
+                ->url(route('filament.dashboard.resources.inspiring-manager.proposal-drafts.index'))
                 ->chart([0, 1, 0, 2, 1, 0, 1]),
 
             Stat::make('Dikembalikan', $submissionStats[4] ?? 0)
                 ->description('Dikembalikan ke member')
                 ->descriptionIcon('heroicon-m-arrow-uturn-left')
                 ->color('gray')
-                ->url(route('filament.dashboard.resources.inspiring-manager.relation-managers.proposal-submissions.index', ['tableFilters[proposal_submission_status][value]' => '4']))
+                ->url(route('filament.dashboard.resources.inspiring-manager.proposal-drafts.index'))
                 ->chart([0, 1, 0, 2, 1, 0, 1]),
         ];
     }

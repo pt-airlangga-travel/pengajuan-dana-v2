@@ -35,7 +35,7 @@ class DashboardStats extends BaseWidget
                 ->description('Total event yang tersedia')
                 ->descriptionIcon('heroicon-m-calendar-days')
                 ->color('primary')
-                ->url(route('filament.dashboard.resources.creative-member.events.index'))
+                ->url(route('filament.dashboard.resources.shared.events.index'))
                 ->chart([7, 3, 4, 5, 6, 3, 5]),
 
             Stat::make('Diterima', $draftStats[1] ?? 0)
@@ -70,7 +70,7 @@ class DashboardStats extends BaseWidget
                 ->description('Submission menunggu Manager approve')
                 ->descriptionIcon('heroicon-m-clock')
                 ->color('warning')
-                ->url(route('filament.dashboard.resources.creative-member.relation-managers.proposal-submissions.index', ['record' => '']))
+                ->url(route('filament.dashboard.resources.creative-member.proposal-drafts.index'))
                 ->chart([1, 2, 1, 3, 2, 1, 2]),
         ];
     }
