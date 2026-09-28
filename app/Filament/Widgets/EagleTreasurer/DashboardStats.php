@@ -26,7 +26,7 @@ class DashboardStats extends BaseWidget
             ->toArray();
 
         return [
-            Stat::make('Event Available', $eventCount)
+            Stat::make('Event Available test ci cd', $eventCount)
                 ->description('Total event yang tersedia')
                 ->descriptionIcon('heroicon-m-calendar-days')
                 ->color('primary')
