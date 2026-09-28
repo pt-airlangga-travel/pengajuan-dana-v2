@@ -1,0 +1,30 @@
+name: Deploy Pengajuan dana v2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute SSH Commands
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            # Masuk ke direktori project
+            cd /home/u101763413/domains/pengajuandanaagt.my.id/public_html/v2/
+            
+            # Masuk ke maintenance mode
+            php artisan down
+            
+            # Tarik kode terbaru
+            git pull origin main
+            
+           
+            php artisan up
