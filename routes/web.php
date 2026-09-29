@@ -49,10 +49,5 @@ Route::get('/bukti-tf/{file}', function ($file) {
     if (Storage::disk('local')->exists($path)) {
         return Storage::disk('local')->download($path);
     }
-    // Fallback: file lama di aplikasi v1
-    $v1 = '/home/u101763413/domains/pengajuandanaagt.my.id/pengajuan_dana_agt/storage/app/bukti_tf/' . $file;
-    if (file_exists($v1)) {
-        return response()->file($v1);
-    }
     abort(404, 'Bukti transfer tidak ditemukan');
-})->name('bukti_tf.download');
+})->middleware('auth')->name('bukti_tf.download');
