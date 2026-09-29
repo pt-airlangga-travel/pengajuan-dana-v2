@@ -38,7 +38,7 @@ Route::get('/print-formulir/{id}', function ($id) {
 // Download bukti transfer — sama seperti v2 BankController@download: baca storage_path('app/bukti_tf/{file}')
 Route::get('/bukti-tf/{file}', function ($file) {
     $file = basename($file);
-    $legacy = storage_path('app/bukti_tf/' . $file);
+    $legacy = storage_path('app/bukti-tf/' . $file);
     if (file_exists($legacy)) {
         return response()->download($legacy);
     }
