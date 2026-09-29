@@ -8,20 +8,21 @@ Route::get('/', function () {
 });
 
 // Download file pengajuan (proposal) — dipakai kolom File Pengajuan di Draft tabel
-// Sama seperti v2 ProposalDraftController@download: baca storage_path('app/proposal/{file}')
 Route::get('/proposal-file/{file}', function ($file) {
     $file = basename($file);
-    $legacy = storage_path('app/proposal/' . $file);
-    if (file_exists($legacy)) {
-        return response()->download($legacy);
+
+    $candidates = [
+        storage_path('app/proposal/' . $file),
+        '/home/u101763413/domains/pengajuandanaagt.my.id/pengajuan_dana_agt_v2/storage/app/proposal/' . $file,
+        '/home/u101763413/domains/pengajuandanaagt.my.id/pengajuan_dana_agt/storage/app/proposal/' . $file,
+    ];
+
+    foreach ($candidates as $path) {
+        if (file_exists($path)) {
+            return response()->download($path);
+        }
     }
-    $path = 'proposal/' . $file;
-    if (Storage::disk('public')->exists($path)) {
-        return Storage::disk('public')->download($path);
-    }
-    if (Storage::disk('local')->exists($path)) {
-        return Storage::disk('local')->download($path);
-    }
+
     abort(404, 'File tidak ditemukan');
 })->middleware('auth')->name('proposal.file.download');
 
@@ -35,19 +36,21 @@ Route::get('/print-formulir/{id}', function ($id) {
     return \App\Services\ProposalHelper::printFormulir(\Illuminate\Http\Request::create('/print-formulir/' . $id, 'GET', ['id' => $id]));
 })->middleware('auth')->name('print.formulir');
 
-// Download bukti transfer — sama seperti v2 BankController@download: baca storage_path('app/bukti_tf/{file}')
+// Download bukti transfer
 Route::get('/bukti-tf/{file}', function ($file) {
     $file = basename($file);
-    $legacy = storage_path('app/bukti-tf/' . $file);
-    if (file_exists($legacy)) {
-        return response()->download($legacy);
+
+    $candidates = [
+        storage_path('app/bukti_tf/' . $file),
+        '/home/u101763413/domains/pengajuandanaagt.my.id/pengajuan_dana_agt_v2/storage/app/bukti_tf/' . $file,
+        '/home/u101763413/domains/pengajuandanaagt.my.id/pengajuan_dana_agt/storage/app/bukti_tf/' . $file,
+    ];
+
+    foreach ($candidates as $path) {
+        if (file_exists($path)) {
+            return response()->file($path);
+        }
     }
-    $path = 'bukti_tf/' . $file;
-    if (Storage::disk('public')->exists($path)) {
-        return Storage::disk('public')->download($path);
-    }
-    if (Storage::disk('local')->exists($path)) {
-        return Storage::disk('local')->download($path);
-    }
+
     abort(404, 'Bukti transfer tidak ditemukan');
 })->middleware('auth')->name('bukti_tf.download');
