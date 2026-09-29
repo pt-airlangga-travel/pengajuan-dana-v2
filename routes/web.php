@@ -55,4 +55,4 @@ Route::get('/bukti-tf/{file}', function ($file) {
         return response()->file($v1);
     }
     abort(404, 'Bukti transfer tidak ditemukan');
-})->middleware('auth')->name('bukti_tf.download');
+})->name('bukti_tf.download');
