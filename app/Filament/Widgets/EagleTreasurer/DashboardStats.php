@@ -10,7 +10,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 class DashboardStats extends BaseWidget
 {
     protected static ?int $sort = 1;
-    protected int | array | null $columns = ['default' => 2, 'md' => 3, 'lg' => 6];
+    protected int | array | null $columns = ['default' => 1, 'sm' => 2, 'lg' => 3];
 
     public static function canView(): bool
     {
@@ -37,21 +37,21 @@ class DashboardStats extends BaseWidget
                 ->description('Menunggu bukti transfer')
                 ->descriptionIcon('heroicon-m-clock')
                 ->color('warning')
-                ->url(route('filament.dashboard.resources.eagle-treasurer.bank-details.index'))
+                ->url(route('filament.dashboard.resources.eagle-treasurer.proposal-drafts.index'))
                 ->chart([1, 2, 1, 3, 2, 1, 2]),
 
             Stat::make('Selesai Transfer', $submissionStats[1] ?? 0)
                 ->description('Semua rekening transferred')
                 ->descriptionIcon('heroicon-m-check-circle')
                 ->color('success')
-                ->url(route('filament.dashboard.resources.eagle-treasurer.bank-details.index'))
+                ->url(route('filament.dashboard.resources.eagle-treasurer.proposal-drafts.index'))
                 ->chart([1, 2, 3, 2, 1, 3, 2]),
 
             Stat::make('Ditolak', $submissionStats[0] ?? 0)
                 ->description('Ditolak Treasurer')
                 ->descriptionIcon('heroicon-m-x-circle')
                 ->color('danger')
-                ->url(route('filament.dashboard.resources.eagle-treasurer.bank-details.index'))
+                ->url(route('filament.dashboard.resources.eagle-treasurer.proposal-drafts.index'))
                 ->chart([0, 1, 0, 2, 1, 0, 1]),
 
             Stat::make('Selesai (Draft)', $submissionStats[1] ?? 0)

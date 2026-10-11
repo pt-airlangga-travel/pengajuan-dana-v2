@@ -147,7 +147,7 @@ class ProposalSubmissionsRelationManager extends RelationManager
                                                             title='Salin nomor rekening'
                                                             class='ml-1 text-gray-400 hover:text-primary-600 cursor-pointer'
                                                         >
-                                                            (⧉)
+                                                            (🗐)
                                                         </button>
                                                     </td>
                                                 </tr>

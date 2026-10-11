@@ -12,7 +12,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 class DashboardStats extends BaseWidget
 {
     protected static ?int $sort = 1;
-    protected int | array | null $columns = ['default' => 2, 'md' => 3, 'lg' => 6];
+    protected int | array | null $columns = ['default' => 1, 'sm' => 2, 'lg' => 3];
 
     public static function canView(): bool
     {

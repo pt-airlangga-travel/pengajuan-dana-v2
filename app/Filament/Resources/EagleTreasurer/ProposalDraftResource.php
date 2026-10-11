@@ -105,7 +105,7 @@ class ProposalDraftResource extends Resource
                     ->sortable(),
 
                 TextColumn::make('proposal_draft_deadline_payment')
-                    ->label(new HtmlString('Deadline <br> Pembayaran'))
+                    ->label(new HtmlString('Tenggat <br> Pembayaran'))
                     ->date('d M Y')
                     ->sortable(),
 

@@ -21,7 +21,7 @@ class BankAccountResource extends Resource
     public static function shouldRegisterNavigation(): bool { return false; }
     public static function canAccess(): bool { return static::hasRole(Role::EagleTreasurer); }
     public static function form(Schema $schema): Schema { return $schema->schema([]); }
-    public static function table(Table $table): Table { return BankDetailResource::table($table); }
+    public static function table(Table $table): Table { return $table->columns([]); }
     public static function getPages(): array { return []; }
 }
 

@@ -75,6 +75,7 @@ class EventResource extends Resource
                     $base = match ($role) {
                         '003' => "/dashboard/organizer-admin/proposal-drafts",
                         '004' => "/dashboard/inspiring-manager/proposal-drafts",
+                        '005' => "/dashboard/eagle-treasurer/proposal-drafts",
                         default => "/dashboard/creative-member/proposal-drafts",
                     };
                     return $base . "?filters[id_event][value]={$eventId}";
