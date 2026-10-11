@@ -30,7 +30,7 @@ class ViewProposalDraft extends ViewRecord
                 TextEntry::make('proposal_draft_defined_id')->label('ID Draft')->formatStateUsing(fn ($s) => ProposalHelper::formatDefinedId($s))->copyable()->weight('bold'),
                 TextEntry::make('proposal_draft_status')->label('Status')->badge()->formatStateUsing(fn ($s) => match((string) $s){'0'=>'Ditolak','1'=>'Selesai','2'=>'Menunggu','3'=>'Diajukan ke Manager',default=>$s})->color(fn($s)=>match((string)$s){'0'=>'danger','1'=>'success','2'=>'warning','3'=>'info',default=>'gray'}),
                 TextEntry::make('proposal_draft_deadline_payment')->label('Deadline')->date('d M Y')->placeholder('-'),
-                TextEntry::make('file_attached_name')->label(new HtmlString('File Pengajuan'))->icon('heroicon-o-paper-clip')->url(fn ($r) => blank($r->file_attached_name)?null:route('proposal.file.download',['file'=>$r->file_attached_name]))->openUrlInNewTab()->copyable()->placeholder('-'),
+                TextEntry::make('file_attached_name')->label(new HtmlString('File Pengajuan'))->icon('heroicon-o-paper-clip')->url(fn ($record) => blank($record?->file_attached_name) ? null : route('proposal.file.download',['file'=>$record->file_attached_name]))->openUrlInNewTab()->copyable()->placeholder('-'),
                 TextEntry::make('proposal_draft_note_member')->label('Catatan Pengajuan')->placeholder('-')->columnSpanFull(),
                 RepeatableEntry::make('Vendors')->label('Daftar Vendor')->columns(2)->schema([
                     TextEntry::make('vendor_name')->label('Nama')->weight('bold'),

@@ -2,6 +2,10 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Login;
+use Caresome\FilamentAuthDesigner\AuthDesignerPlugin;
+use Caresome\FilamentAuthDesigner\Data\AuthPageConfig;
+use Caresome\FilamentAuthDesigner\Enums\MediaPosition;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -19,10 +23,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use MarcoGermani87\FilamentCaptcha\FilamentCaptcha;
-use Caresome\FilamentAuthDesigner\AuthDesignerPlugin;
-use App\Filament\Pages\Auth\Login;
-use Caresome\FilamentAuthDesigner\Data\AuthPageConfig;
-use Caresome\FilamentAuthDesigner\Enums\MediaPosition;
 
 class DashboardPanelProvider extends PanelProvider
 {
@@ -38,8 +38,12 @@ class DashboardPanelProvider extends PanelProvider
             ->path('dashboard')
             ->login(Login::class)
             ->colors([
-                'primary' => Color::Blue,
-                // 'primary' => Color::rgb('2,2,78'),
+                'primary' => Color::Blue,   // Ciri khas warna default Filament v3
+                'gray'    => Color::Zinc,    // Atau ganti dengan Color::Slate / Color::Gray
+                'info'    => Color::Sky,
+                'success' => Color::Emerald,
+                'warning' => Color::Amber,
+                'danger'  => Color::Rose,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
