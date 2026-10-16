@@ -51,7 +51,7 @@ class ProposalSubmissionsRelationManager extends RelationManager
                         '0' => 'Ditolak',
                         '1' => 'Selesai',
                         '2' => 'Menunggu',
-                        '3' => 'Diajukan ke Manager',
+                        '3' => 'Proses TF',
                         default => $state,
                     })
                     ->color(fn ($state) => match ((string) $state) {

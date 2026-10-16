@@ -42,35 +42,35 @@ class DashboardStats extends BaseWidget
                 ->description('Draft yang sudah disetujui')
                 ->descriptionIcon('heroicon-m-check-circle')
                 ->color('success')
-                ->url(route('filament.dashboard.resources.creative-member.proposal-drafts.index', ['tableFilters[id_event][value]' => '']))
+                ->url(route('filament.dashboard.resources.creative-member.proposal-drafts.index', ['filters[id_event][value]' => 'ALL', 'filters[proposal_draft_status][value]' => '1']))
                 ->chart([1, 2, 3, 2, 3, 4, 3]),
 
             Stat::make('Menunggu Admin', $draftStats[2] ?? 0)
                 ->description('Menunggu verifikasi Organizer')
                 ->descriptionIcon('heroicon-m-clock')
                 ->color('warning')
-                ->url(route('filament.dashboard.resources.creative-member.proposal-drafts.index', ['tableFilters[id_event][value]' => '', 'tableFilters[proposal_draft_status][value]' => '2']))
+                ->url(route('filament.dashboard.resources.creative-member.proposal-drafts.index', ['filters[id_event][value]' => 'ALL', 'filters[proposal_draft_status][value]' => '2']))
                 ->chart([2, 1, 3, 2, 1, 3, 2]),
 
             Stat::make('Menunggu Manager', $draftStats[3] ?? 0)
                 ->description('Disetujui Admin, menunggu Manager')
                 ->descriptionIcon('heroicon-m-user-group')
                 ->color('info')
-                ->url(route('filament.dashboard.resources.creative-member.proposal-drafts.index', ['tableFilters[id_event][value]' => '', 'tableFilters[proposal_draft_status][value]' => '3']))
+                ->url(route('filament.dashboard.resources.creative-member.proposal-drafts.index', ['filters[id_event][value]' => 'ALL', 'filters[proposal_draft_status][value]' => '3']))
                 ->chart([1, 3, 2, 4, 3, 2, 4]),
 
             Stat::make('Ditolak', $draftStats[0] ?? 0)
                 ->description('Draft yang ditolak Admin/Manager')
                 ->descriptionIcon('heroicon-m-x-circle')
                 ->color('danger')
-                ->url(route('filament.dashboard.resources.creative-member.proposal-drafts.index', ['tableFilters[id_event][value]' => '', 'tableFilters[proposal_draft_status][value]' => '0']))
+                ->url(route('filament.dashboard.resources.creative-member.proposal-drafts.index', ['filters[id_event][value]' => 'ALL', 'filters[proposal_draft_status][value]' => '0']))
                 ->chart([0, 1, 0, 2, 1, 0, 1]),
 
             Stat::make('Submission Menunggu', $submissionStats[2] ?? 0)
                 ->description('Submission menunggu Manager approve')
                 ->descriptionIcon('heroicon-m-clock')
                 ->color('warning')
-                ->url(route('filament.dashboard.resources.creative-member.proposal-drafts.index'))
+                ->url(route('filament.dashboard.resources.creative-member.proposal-drafts.index', ['filters[id_event][value]' => 'ALL']))
                 ->chart([1, 2, 1, 3, 2, 1, 2]),
         ];
     }

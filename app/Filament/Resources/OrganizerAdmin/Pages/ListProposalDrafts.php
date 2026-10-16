@@ -15,7 +15,7 @@ class ListProposalDrafts extends ListRecords
             \Filament\Actions\CreateAction::make()
                 ->label('Buat Draft')
                 ->url(function () {
-                    $event = session('selected_event') ?? request()->query('event') ?? request()->input('tableFilters.id_event.value');
+                    $event = session('selected_event') ?? request()->query('event') ?? request()->input('filters.id_event.value');
                     if (blank($event)) {
                         \Filament\Notifications\Notification::make()->title('Pilih Event dulu')->body('Pilih Event di filter atau klik Daftar Draft dari menu Events sebelum membuat draft.')->warning()->send();
                         return null;

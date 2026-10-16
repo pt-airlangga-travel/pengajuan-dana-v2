@@ -51,14 +51,16 @@ class ProposalDraftResource extends Resource
         return $table->striped()
             ->modifyQueryUsing(fn (Builder $query) => $query->with(['Vendors', 'creativeMember', 'Event.institution']))
             ->heading(function () {
-                $eventId = session('selected_event') ?? request()->query('event') ?? request()->input('tableFilters.id_event.value') ?? (request()->query('tableFilters')['id_event']['value'] ?? null);
+                $eventId = session('selected_event') ?? request()->query('event') ?? request()->input('filters.id_event.value') ?? (request()->query('filters')['id_event']['value'] ?? null);
                 if (blank($eventId)) return null;
+                if ($eventId === 'ALL') return 'Semua Event';
                 $event = \App\Models\Event::getCachedEvent($eventId);
                 return $event ? ($event->event_name . ' — ' . ($event->institution?->institution_name ?? '')) : null;
             })
             ->description(function () {
-                $eventId = session('selected_event') ?? request()->query('event') ?? request()->input('tableFilters.id_event.value') ?? (request()->query('tableFilters')['id_event']['value'] ?? null);
+                $eventId = session('selected_event') ?? request()->query('event') ?? request()->input('filters.id_event.value') ?? (request()->query('filters')['id_event']['value'] ?? null);
                 if (blank($eventId)) return null;
+                if ($eventId === 'ALL') return 'Menampilkan draft dari semua event.';
                 $event = \App\Models\Event::getCachedEvent($eventId);
                 if (!$event) return null;
                 $avail = $event->event_availability ? 'Available' : 'Tidak Available';
@@ -71,31 +73,44 @@ class ProposalDraftResource extends Resource
             ->recordAction(null) 
             
             ->defaultSort('created_at', 'desc')
-            ->filtersLayout(FiltersLayout::AboveContent)->filtersFormColumns(1)->filtersFormWidth('xl')->deferFilters(false)
+            ->filtersLayout(FiltersLayout::AboveContent)->filtersFormColumns(2)->filtersFormWidth('xl')->deferFilters(false)
             ->filters([
                 SelectFilter::make('id_event')
                     ->label('Filter Event')
                     ->default(fn () => request()->query('event') ?? request()->input('filters.id_event.value'))
-                    ->options(fn () => Event::getCachedSelectOptions()
-                    ->mapWithKeys(fn ($e) => [$e->event_defined_id => ProposalHelper::formatDefinedId($e->event_defined_id) . ' | ' . $e->event_name]))
+                    ->options(fn () => ['ALL' => 'Semua Event'] + Event::getCachedSelectOptions())
                     ->searchable()->preload()->native(false)
                     ->placeholder('Silakan Pilih Event')
                     ->query(function (Builder $query, array $data) {
                         $value = $data['value'] ?? null;
                         if (filled($value)) {
                             session(['selected_event' => $value]);
-                            $query->where('id_event', $value);
+                            if ($value !== 'ALL') {
+                                $query->where('id_event', $value);
+                            }
                         } else {
-                            $eventParam = request()->query('event') ?? request()->input('tableFilters.id_event.value');
+                            $eventParam = request()->query('event') ?? request()->input('filters.id_event.value');
                             if (filled($eventParam)) {
                                 session(['selected_event' => $eventParam]);
-                                $query->where('id_event', $eventParam);
+                                if ($eventParam !== 'ALL') {
+                                    $query->where('id_event', $eventParam);
+                                }
                             } else {
                                 session()->forget('selected_event');
                                 $query->whereRaw('1=0');
                             }
                         }
                     }),
+                SelectFilter::make('proposal_draft_status')
+                    ->label('Filter Status')
+                    ->options([
+                        '0' => 'Ditolak',
+                        '1' => 'Selesai',
+                        '2' => 'Menunggu',
+                        '3' => 'Diajukan ke Manager',
+                    ])
+                    ->native(false)
+                    ->placeholder('Semua Status'),
             ])
             ->emptyStateHeading('Silahkan Pilih Event Terlebih Dahulu')
             ->emptyStateDescription('Klik Daftar Draft dari menu Events atau pilih filter Event di atas')

@@ -18,7 +18,7 @@ class CreateProposalDraft extends CreateRecord
                 $event = request()->query('event') ?? session('selected_event');
                 return blank($event)
                     ? ProposalDraftResource::getUrl('index')
-                    : ProposalDraftResource::getUrl('index', ['tableFilters' => ['id_event' => ['value' => $event]]]);
+                    : ProposalDraftResource::getUrl('index', ['filters' => ['id_event' => ['value' => $event]]]);
             });
     }
 
@@ -27,7 +27,7 @@ class CreateProposalDraft extends CreateRecord
         $event = $this->record->id_event ?? request()->query('event') ?? session('selected_event');
         return blank($event)
             ? ProposalDraftResource::getUrl('index')
-            : ProposalDraftResource::getUrl('index', ['tableFilters' => ['id_event' => ['value' => $event]]]);
+            : ProposalDraftResource::getUrl('index', ['filters' => ['id_event' => ['value' => $event]]]);
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array

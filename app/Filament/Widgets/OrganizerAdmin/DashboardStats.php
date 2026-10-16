@@ -42,63 +42,63 @@ class DashboardStats extends BaseWidget
                 ->description('Menunggu verifikasi Organizer')
                 ->descriptionIcon('heroicon-m-clock')
                 ->color('warning')
-                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index', ['tableFilters[proposal_draft_status][value]' => '2']))
+                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index', ['filters[id_event][value]' => 'ALL', 'filters[proposal_draft_status][value]' => '2']))
                 ->chart([2, 1, 3, 2, 1, 3, 2]),
 
             Stat::make('Draft Diterima', $draftStats[3] ?? 0)
                 ->description('Disetujui, menunggu Manager')
                 ->descriptionIcon('heroicon-m-check-circle')
                 ->color('info')
-                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index', ['tableFilters[proposal_draft_status][value]' => '3']))
+                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index', ['filters[id_event][value]' => 'ALL', 'filters[proposal_draft_status][value]' => '3']))
                 ->chart([1, 2, 3, 2, 1, 3, 2]),
 
             Stat::make('Draft Diterima Admin', $draftStats[1] ?? 0)
                 ->description('Sudah disetujui Admin')
                 ->descriptionIcon('heroicon-m-check-circle')
                 ->color('success')
-                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index', ['tableFilters[proposal_draft_status][value]' => '1']))
+                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index', ['filters[id_event][value]' => 'ALL', 'filters[proposal_draft_status][value]' => '1']))
                 ->chart([1, 2, 3, 2, 1, 3, 2]),
 
             Stat::make('Draft Ditolak', $draftStats[0] ?? 0)
                 ->description('Ditolak Organizer')
                 ->descriptionIcon('heroicon-m-x-circle')
                 ->color('danger')
-                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index', ['tableFilters[proposal_draft_status][value]' => '0']))
+                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index', ['filters[id_event][value]' => 'ALL', 'filters[proposal_draft_status][value]' => '0']))
                 ->chart([0, 1, 0, 2, 1, 0, 1]),
 
             Stat::make('Submission Menunggu Manager', $submissionStats[2] ?? 0)
                 ->description('Menunggu Manager approve')
                 ->descriptionIcon('heroicon-m-clock')
                 ->color('warning')
-                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index'))
+                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index', ['filters[id_event][value]' => 'ALL']))
                 ->chart([1, 2, 1, 3, 2, 1, 2]),
 
             Stat::make('Submission Diproses', $submissionStats[3] ?? 0)
                 ->description('Diproses Bendahara')
                 ->descriptionIcon('heroicon-m-arrow-path')
                 ->color('info')
-                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index'))
+                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index', ['filters[id_event][value]' => 'ALL']))
                 ->chart([1, 2, 3, 2, 1, 3, 2]),
 
             Stat::make('Submission Selesai', $submissionStats[1] ?? 0)
                 ->description('Transfer selesai')
                 ->descriptionIcon('heroicon-m-check-circle')
                 ->color('success')
-                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index'))
+                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index', ['filters[id_event][value]' => 'ALL']))
                 ->chart([1, 2, 3, 2, 1, 3, 2]),
 
             Stat::make('Submission Ditolak', $submissionStats[0] ?? 0)
                 ->description('Ditolak Manager/Bendahara')
                 ->descriptionIcon('heroicon-m-x-circle')
                 ->color('danger')
-                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index'))
+                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index', ['filters[id_event][value]' => 'ALL']))
                 ->chart([0, 1, 0, 2, 1, 0, 1]),
 
             Stat::make('Submission Dikembalikan', $submissionStats[4] ?? 0)
                 ->description('Dikembalikan ke member')
                 ->descriptionIcon('heroicon-m-arrow-uturn-left')
                 ->color('gray')
-                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index'))
+                ->url(route('filament.dashboard.resources.organizer-admin.proposal-drafts.index', ['filters[id_event][value]' => 'ALL']))
                 ->chart([0, 1, 0, 2, 1, 0, 1]),
         ];
     }
