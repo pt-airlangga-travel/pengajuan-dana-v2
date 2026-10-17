@@ -4,10 +4,18 @@ namespace App\Filament\Resources\EagleTreasurer;
 
 use App\Enums\Role;
 use App\Filament\Resources\Concerns\HasRoleNavigation;
+use App\Models\BankAsal;
+use App\Models\BankTransfer;
 use App\Models\Event;
 use App\Models\ProposalDraft;
 use App\Services\ProposalHelper;
+use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
@@ -15,6 +23,8 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 
 /**
@@ -23,6 +33,7 @@ use Illuminate\Support\HtmlString;
  */
 class ProposalDraftResource extends Resource
 {
+    use HasRoleNavigation;
     use HasRoleNavigation;
 
     protected static ?string $model = ProposalDraft::class;
@@ -223,6 +234,162 @@ class ProposalDraftResource extends Resource
             ])
             ->recordActions([
                 ViewAction::make()->label('Lihat')->icon('heroicon-o-eye')->color('gray'),
+                Action::make('uploadBukti')
+                    ->label('Upload Bukti')
+                    ->icon('heroicon-o-arrow-up-tray')
+                    ->color('primary')
+                    ->visible(function ($record) {
+                        $submission = $record->ProposalSubmissions()->where('proposal_submission_status', 3)->latest()->first();
+                        if (! $submission) return false;
+                        // Jangan tampilkan jika semua rekening sudah ditransfer
+                        $allDone = $submission->BankAccounts->isNotEmpty() && $submission->BankAccounts->every(fn ($ba) => \App\Models\BankTransfer::where('id_bank_account', $ba->id)->exists());
+                        return ! $allDone;
+                    })
+                    ->modalHeading(fn ($record) => 'Upload Bukti TF — ' . ProposalHelper::formatDefinedId($record->proposal_draft_defined_id))
+                    ->modalWidth('lg')
+                    ->modalSubmitActionLabel('Simpan Bukti')
+                    ->schema(function ($record) {
+                        $submission = $record->ProposalSubmissions()->where('proposal_submission_status', 3)->latest()->first();
+                        if (! $submission) return [];
+
+                        return [
+                            Select::make('id_bank_account')
+                                ->label('Rekening Tujuan')
+                                ->required()
+                                ->native(false)
+                                ->options(function () use ($submission) {
+                                    return $submission->BankAccounts->mapWithKeys(function ($ba) {
+                                        $nominal = blank($ba->bank_account_sub_total) ? '-' : 'Rp ' . number_format((int) preg_replace('/\D/', '', (string) $ba->bank_account_sub_total), 0, ',', '.');
+                                        $done = $ba->BankTransfer ? ' — Sudah TF' : '';
+                                        return [$ba->id => ($ba->Bank?->bank_name ?? '-') . ' · ' . ($ba->bank_account_owner ?? '-') . ' · ' . ($ba->bank_account_number ?? '-') . ' (' . $nominal . ')' . $done];
+                                    })->toArray();
+                                }),
+                            Select::make('id_bank_asal')
+                                ->label('Bank Asal (Sumber Dana)')
+                                ->required()
+                                ->native(false)
+                                ->searchable()
+                                ->preload()
+                                ->options(fn () => BankAsal::query()->get()->mapWithKeys(fn ($b) => [$b->id => $b->bank_name . ($b->no_rekening ? ' · ' . $b->no_rekening : '')])->toArray()),
+                            TextInput::make('bank_transfer_melalui')
+                                ->label('Melalui / Metode')
+                                ->required()
+                                ->maxLength(100)
+                                ->placeholder('cth: BI-FAST, SKN, RTGS, Tunai'),
+                            DatePicker::make('bank_transfer_dijalankan_tanggal')
+                                ->label('Tanggal Transfer')
+                                ->required()
+                                ->default(now())
+                                ->maxDate(now()),
+                            FileUpload::make('transfer_file')
+                                ->label('File Bukti Transfer')
+                                ->required()
+                                ->directory('bukti_tf')
+                                ->disk('local')
+                                ->maxSize(5120)
+                                ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'])
+                                ->helperText('PDF / JPG / PNG, maks 5 MB.'),
+                        ];
+                    })
+                    ->action(function (array $data, $record) {
+                        $submission = $record->ProposalSubmissions()->where('proposal_submission_status', 3)->latest()->first();
+                        if (! $submission) {
+                            Notification::make()->title('Submission aktif tidak ditemukan.')->danger()->send();
+                            return;
+                        }
+
+                        $bankAccount = $submission->BankAccounts()->whereKey($data['id_bank_account'])->first();
+                        if (! $bankAccount) {
+                            Notification::make()->title('Rekening tidak valid.')->danger()->send();
+                            return;
+                        }
+
+                        $stored = $data['transfer_file'] ?? null;
+                        if (is_array($stored)) {
+                            $stored = reset($stored);
+                        }
+
+                        if (blank($stored)) {
+                            Notification::make()->title('File bukti wajib diunggah.')->danger()->send();
+                            return;
+                        }
+
+                        $fileName = basename(is_string($stored) ? $stored : (string) $stored);
+
+                        DB::transaction(function () use ($data, $record, $submission, $bankAccount, $fileName) {
+                            $existing = BankTransfer::where('id_bank_account', $bankAccount->id)->first();
+
+                            if ($existing) {
+                                $existing->update([
+                                    'transfer_attached_name' => $fileName,
+                                    'bank_transfer_melalui' => $data['bank_transfer_melalui'],
+                                    'bank_transfer_dijalankan_tanggal' => $data['bank_transfer_dijalankan_tanggal'],
+                                    'id_bank_asal' => $data['id_bank_asal'],
+                                    'eagle_treasurer' => Auth::id(),
+                                ]);
+                            } else {
+                                $latest = BankTransfer::orderBy('bank_transfer_defined_id', 'desc')->first();
+                                $next = ProposalHelper::defined_id(((int) ($latest?->bank_transfer_defined_id ?? 0)) + 1, 3);
+
+                                BankTransfer::create([
+                                    'bank_transfer_defined_id' => $next,
+                                    'transfer_attached_name' => $fileName,
+                                    'bank_transfer_melalui' => $data['bank_transfer_melalui'],
+                                    'bank_transfer_dijalankan_tanggal' => $data['bank_transfer_dijalankan_tanggal'],
+                                    'id_bank_account' => $bankAccount->id,
+                                    'id_bank_asal' => $data['id_bank_asal'],
+                                    'eagle_treasurer' => Auth::id(),
+                                ]);
+                            }
+
+                            $allTransferred = $submission->BankAccounts()->get()->every(
+                                fn ($ba) => BankTransfer::where('id_bank_account', $ba->id)->exists()
+                            );
+
+                            if ($allTransferred) {
+                                $submission->update(['proposal_submission_status' => 1]);
+                                $record->update(['proposal_draft_status' => 1]);
+                            }
+                        });
+
+                        Notification::make()->title('Bukti transfer tersimpan.')->success()->send();
+                    }),
+                Action::make('tolak')
+                    ->label('Tolak')
+                    ->icon('heroicon-o-x-mark')
+                    ->color('danger')
+                    ->visible(function ($record) {
+                        return $record->ProposalSubmissions()
+                            ->where('proposal_submission_status', 3)
+                            ->exists();
+                    })
+                    ->requiresConfirmation()
+                    ->modalHeading('Tolak Pengajuan')
+                    ->form([
+                        \Filament\Forms\Components\Textarea::make('proposal_submission_note_manager')
+                            ->label('Alasan Penolakan')
+                            ->required()
+                            ->placeholder('Tuliskan alasan penolakan...'),
+                    ])
+                    ->action(function (array $data, $record) {
+                        $submission = $record->ProposalSubmissions()->where('proposal_submission_status', 3)->latest()->first();
+                        if (! $submission) {
+                            Notification::make()->title('Submission aktif tidak ditemukan.')->danger()->send();
+                            return;
+                        }
+
+                        DB::transaction(function () use ($data, $submission, $record) {
+                            $submission->update([
+                                'proposal_submission_status' => 0,
+                                'proposal_submission_note_manager' => $data['proposal_submission_note_manager'],
+                            ]);
+                            $record->update([
+                                'proposal_draft_status' => 0,
+                            ]);
+                        });
+
+                        Notification::make()->title('Pengajuan berhasil ditolak.')->success()->send();
+                    }),
             ]);
     }
 
